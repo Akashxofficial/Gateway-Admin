@@ -13,7 +13,7 @@ export default function BlogsPage() {
       title: "Affordable Countries To Studyin Abroad",
       category: "Study Abroad",
       date: "January 7, 2026",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "This section explores emerging and budget friendly destinations offering globally recognised MBA programmes, including Germany, France..."
     },
     {
@@ -21,7 +21,7 @@ export default function BlogsPage() {
       title: "Top Universities for Engineering Programs",
       category: "Universities",
       date: "January 5, 2026",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "Discover the best engineering programs worldwide and what makes these universities stand out in the field of technology and innovation."
     },
     {
@@ -29,7 +29,7 @@ export default function BlogsPage() {
       title: "Visa Application Process Simplified",
       category: "Visa",
       date: "January 3, 2026",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "A comprehensive guide to understanding visa requirements, documentation, and the application process for studying abroad."
     },
     {
@@ -37,7 +37,7 @@ export default function BlogsPage() {
       title: "Scholarship Opportunities in 2026",
       category: "Scholarships",
       date: "December 30, 2025",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "Explore various scholarship opportunities available for international students in top study destinations around the world."
     },
     {
@@ -45,7 +45,7 @@ export default function BlogsPage() {
       title: "IELTS vs TOEFL: Which One Should You Choose?",
       category: "Exams",
       date: "December 28, 2025",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "A detailed comparison between IELTS and TOEFL to help you decide which English proficiency test is right for your goals."
     },
     {
@@ -53,7 +53,7 @@ export default function BlogsPage() {
       title: "Student Life in Canada: What to Expect",
       category: "Study Abroad",
       date: "December 25, 2025",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "Get insights into student life, culture, accommodation, and opportunities available for international students in Canada."
     },
     {
@@ -61,7 +61,7 @@ export default function BlogsPage() {
       title: "MBA Programs in Europe: A Complete Guide",
       category: "Study Abroad",
       date: "December 22, 2025",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "Explore top MBA programs across Europe, including admission requirements, costs, and career opportunities for international students."
     },
     {
@@ -69,7 +69,7 @@ export default function BlogsPage() {
       title: "Understanding Student Visa Requirements",
       category: "Visa",
       date: "December 20, 2025",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "Complete guide to student visa requirements for major study destinations including USA, UK, Canada, and Australia."
     },
     {
@@ -77,7 +77,7 @@ export default function BlogsPage() {
       title: "Preparing for GRE and GMAT Exams",
       category: "Exams",
       date: "December 18, 2025",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop",
+      image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg",
       excerpt: "Essential tips and strategies for preparing for GRE and GMAT exams to achieve your target scores for graduate programs."
     }
   ];
@@ -93,14 +93,14 @@ export default function BlogsPage() {
       {/* Hero Section */}
       <section className="relative py-20 bg-gray-50" style={{ paddingTop: '150px', marginTop: '75px' }}>
         {/* Decorative Arrow on Right Side */}
-        <div className="absolute right-0 top-[55%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
+        <div className="absolute -right-30 top-[55%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
           <Image
             src="/g logo.png"
             alt="Decorative Arrow"
             width={400}
             height={40}
             className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-            style={{ transform: 'scaleX(-1)' }}
+            style={{ transform: 'scaleX(-1) rotate(-35deg)' }}
           />
         </div>
         <div className="container mx-auto px-6">
@@ -122,7 +122,7 @@ export default function BlogsPage() {
             
             {/* Search Bar */}
             <div className="max-w-4xl mx-auto mt-8">
-              <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex flex-col sm:flex-row gap-4 bg-gray-100 p-4 rounded-lg shadow-sm border border-gray-400">
                 <div className="flex-1 flex items-center gap-3">
                   <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -201,54 +201,81 @@ export default function BlogsPage() {
       </section>
 
       {/* Blog Posts Grid */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="bg-white py-12 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
             {blogPosts.map((post) => (
-              <motion.div
+              <div
                 key={post.id}
-                className="bg-white rounded-b-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                style={{ borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}
+                className="
+                  relative bg-white border border-[#FF6B35]
+                  rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
+                  transition-all duration-300 hover:shadow-xl
+                "
               >
-                <div className="relative h-72 w-full overflow-hidden" style={{ borderTopLeftRadius: '12px', borderTopRightRadius: '12px', border: '2px solid #FF6B35', borderBottom: 'none' }}>
+                {/* ORANGE BACKGROUND SHAPE */}
+                <div
+                  className="
+                    absolute -top-2 -left-2
+                    w-28 h-28 sm:w-36 sm:h-36 lg:w-45 lg:h-45
+                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
+                    bg-[#FF6B35] -z-10
+                  "
+                ></div>
+
+                {/* IMAGE */}
+                <div
+                  className="
+                    relative overflow-hidden bg-gray-300
+                    h-[200px] sm:h-[220px] lg:h-[260px]
+                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
+                  "
+                >
                   <img
-                    src={post.image || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop'}
+                    src={post.image || 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg'}
                     alt={post.title}
                     className="w-full h-full object-cover"
-                    style={{ 
-                      borderTopLeftRadius: '12px', 
-                      borderTopRightRadius: '12px',
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block'
-                    }}
-                    loading="lazy"
                     onError={(e) => {
                       e.currentTarget.onerror = null;
-                      e.currentTarget.src = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=500&fit=crop';
+                      e.currentTarget.src = 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg';
                     }}
                   />
-                </div>
-                <div className="p-6 rounded-b-lg border-2 border-t-0 border-gray-200 flex-grow flex flex-col" style={{ borderColor: '#FF6B35' }}>
-                  <div className="text-sm text-gray-500 mb-3">
-                    {post.category} {post.date}
+
+                  {/* OVERLAY */}
+                  <div
+                    className="
+                      absolute inset-0 bg-black/50
+                      flex flex-col items-center justify-center text-center px-4
+                      rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
+                      pointer-events-none
+                    "
+                  >
+                    <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2 sm:mb-4 lg:mb-6">
+                      {post.title}
+                    </h3>
+                    <p className="text-white text-sm sm:text-base lg:text-lg">
+                      {post.category} {post.date}
+                    </p>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-4">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-5 flex-grow">
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-4 sm:p-5 lg:p-6 text-center">
+                  <p className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6">
                     {post.excerpt}
                   </p>
-                  <a href="#" className="text-[#FF6B35] font-semibold text-sm hover:underline">
-                    Read More &gt;&gt;
-                  </a>
+
+                  <button
+                    className="
+                      bg-[#FF6B35] hover:bg-[#e85f2f]
+                      text-white text-sm font-semibold
+                      px-5 py-2 rounded transition-colors
+                    "
+                  >
+                    Read More »
+                  </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
