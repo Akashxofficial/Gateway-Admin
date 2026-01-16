@@ -177,7 +177,7 @@ export default function Header({ isScrolled = false }: HeaderProps) {
                   )}
                 </div>
 
-                <a href="#" className="text-gray-700 font-medium py-2 px-4 hover:bg-gray-50 rounded">Blog</a>
+                <a href="/blog" className="text-gray-700 font-medium py-2 px-4 hover:bg-gray-50 rounded">Blog</a>
                 <a href="#" className="text-gray-700 font-medium py-2 px-4 hover:bg-gray-50 rounded">Contact</a>
               </nav>
             </div>
@@ -287,7 +287,7 @@ export default function Header({ isScrolled = false }: HeaderProps) {
               )}
             </div>
 
-            <a href="#" className="text-gray-700 font-medium hover:text-orange-500 transition text-sm">Blog</a>
+            <a href="/blog" className="text-gray-700 font-medium hover:text-orange-500 transition text-sm">Blog</a>
             <a href="#" className="text-gray-700 font-medium hover:text-orange-500 transition text-sm">Contact</a>
           </nav>
         </div>
