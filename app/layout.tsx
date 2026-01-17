@@ -1,14 +1,17 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Noto_Sans } from "next/font/google"
 import { Navbar } from "@/components/navbar"
 import "./globals.css"
 import 'keen-slider/keen-slider.min.css';
 import { Footer } from "@/components/Footer"
 
+const notoSans = Noto_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+})
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Global Way - Your Education Gateway",
@@ -52,7 +55,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`${notoSans.className} antialiased`}>
         <div style={{ backgroundColor: '#626262' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center py-2 text-xs sm:text-sm gap-2 sm:gap-0">
             <div className="flex items-center space-x-2">

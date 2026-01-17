@@ -47,66 +47,65 @@ const TABS = [
 
 export default function AboutTabsSection() {
   const [activeTab, setActiveTab] = useState("excellence");
-
   const activeData = TABS.find((t) => t.key === activeTab)!;
 
   return (
-    <section className=" mb-6">
-      <div className="">
+    <section className="mb-6">
+      {/* TABS HEADER */}
+      <div className="relative mb-8">
+        <div className="absolute -bottom-1 left-0 right-0 h-[3px] bg-[#f46c44]/40" />
 
-        {/* Tabs Header */}
-        <div className="relative mb-8">
-          {/* Line */}
-          <div className="absolute -bottom-1 left-0 right-0 h-[3px] bg-[#f46c44]/40" />
-          <div className="flex gap-4 relative z-10 max-w-xl mx-auto">
-            {TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all
-                  ${
-                    activeTab === tab.key
-                      ? "bg-[#f46c44] text-white shadow-md"
-                      : "bg-white text-gray-500"
-                  }
-                `}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 relative z-10 max-w-xl mx-auto">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`
+                px-5 sm:px-6 py-2 rounded-full
+                text-sm font-semibold transition-all
+                ${
+                  activeTab === tab.key
+                    ? "bg-[#f46c44] text-white shadow-md"
+                    : "bg-white text-gray-500"
+                }
+              `}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-start">
+        
+        {/* LEFT IMAGE */}
+        <div className="relative flex-shrink-0">
+          <div className="rounded-2xl overflow-hidden shadow-xl w-[200px] sm:w-[230px]">
+            <Image
+              src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg"
+              alt="Team Discussion"
+              width={230}
+              height={250}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        </div>
+
+        {/* RIGHT CONTENT */}
+        <div className="text-center sm:text-left">
+          <ul className="space-y-2">
+            {activeData.points.map((point, i) => (
+              <li
+                key={i}
+                className="flex items-center justify-center sm:justify-start gap-3 text-gray-600 font-medium"
               >
-                {tab.label}
-              </button>
+                <span className="text-[#f46c44] text-lg">✓</span>
+                {point}
+              </li>
             ))}
-          </div>
-
+          </ul>
         </div>
-
-        {/* Content */}
-        <div className="flex gap-6 items-center">
-          
-          {/* Left Image */}
-          <div className="relative">
-            <div className="rounded-2xl overflow-hidden shadow-xl max-w-sm">
-              <Image
-                src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg"
-                alt="Team Discussion"
-                width={230}
-                height={250}
-                className="object-cover"
-              />
-            </div>
-          </div>
-
-          <div>
-
-            <ul className="space-y-2">
-              {activeData.points.map((point, i) => (
-                <li key={i} className="flex items-center gap-3 text-gray-600 font-medium">
-                  <span className="text-[#f46c44] text-lg ">✓</span>
-                  {point}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
       </div>
     </section>
   );
