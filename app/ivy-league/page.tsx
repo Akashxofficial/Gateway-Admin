@@ -7,7 +7,8 @@ import { Footer } from "@/components/Footer";
 import VideoBackground from "@/components/VideoBackground";
 import StatisticsSlider from "@/components/StatisticsSlider";
 import { useEffect, useState } from "react";
-import OffersSlider, { IvyLeagueSection } from "@/components/PageComponent/DistinationSliders";
+import OffersSlider, { AdmissionRequirementsUK, HowGawayHelps, IvyLeagueSection, ScholarshipRequirements } from "@/components/PageComponent/DistinationSliders";
+import CaseStudy from "@/components/PageComponent/CaseStudy";
 
 const images = [
   "https://t3.ftcdn.net/jpg/06/23/84/22/360_F_623842281_ECGgEpMEkQdH83gbmexIn5l3ACl7V3M0.jpg",
@@ -288,218 +289,36 @@ export default function IvyLeaguePage() {
           </div>
         </div>
       </section>
-
-      {/* Statistics Bar */}
-      <section className="">
-        <div className="">
-          <OffersSlider />
-        </div>
-      </section>
-      <IvyLeagueSection/>
-
-      {/* What Makes Ivy League Special */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16" style={{ color: '#f46c44' }}>
-            What Makes Ivy League Special
+      <OffersSlider />
+      <IvyLeagueSection />
+      <AdmissionRequirementsUK />
+      <HowGawayHelps />
+      <section className="mx-auto bg-[#fff9f4] py-20">
+        <div className="max-w-7xl mx-auto mb-8">
+          <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
+            Admission Process
+            <span className="text-[#656565]"> Roadmap</span>
           </h2>
+          {/* <p className="text-lg text-center font-semibold text-gray-700 ">"Way To Tell It Like It Is, Ivy Coach"</p> */}
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left Panel - Features */}
-            <div className="space-y-8">
-              <div className="border-4 rounded-lg p-8" style={{ borderColor: '#f46c44', backgroundColor: '#fef5f1' }}>
-                <h3 className="text-2xl font-bold mb-4 text-gray-800">Ivy League Curriculum</h3>
-                <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                  Our Ivy League curriculum is designed to help students develop the skills and knowledge necessary to succeed in the Ivy League. The curriculum includes rigorous coursework, research opportunities, and access to world-class faculty.
-                </p>
-                <button className="bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
-                  Read More
-                </button>
-              </div>
-
-              <div className="border-4 rounded-lg p-8" style={{ borderColor: '#f46c44', backgroundColor: '#fef5f1' }}>
-                <h3 className="text-2xl font-bold mb-4 text-gray-800">Profile Building</h3>
-                <p className="text-gray-600 text-lg leading-relaxed">
-                  We help students build a strong profile that showcases their unique talents and achievements. This includes extracurricular activities, leadership roles, community service, and academic excellence.
-                </p>
-                <button className="mt-4 bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-600 transition">
-                  Read More
-                </button>
-              </div>
-            </div>
-
-            {/* Right Panel - Image */}
-            <div className="relative">
-              <img
-                src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=600&fit=crop"
-                alt="Student with passport"
-                className="w-full h-[600px] object-cover rounded-3xl"
-                style={{ border: '4px solid #f46c44' }}
-              />
-            </div>
+          <div className="max-w-5xl mx-auto flex justify-center">
+            <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full"/>
           </div>
         </div>
       </section>
+      <ScholarshipRequirements/>
+      <ImageTestimonial font={true} />
+      <CaseStudy font={true}/>
 
-      {/* Admission Requirements */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-4" style={{ color: '#f46c44' }}>
-            Admission Requirements for United Kingdom Study Abroad
-          </h2>
-          <p className="text-center text-gray-600 mb-16 max-w-4xl mx-auto text-lg">
-            Here are the main requirements to study in UK which you need to ensure you to apply for the university.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="space-y-5">
-              {['Copy of valid passport', 'GRE/GMAT scores for PG programs', 'Letter of recommendation (LORs)', 'Academic transcripts'].map((req, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <svg className="w-7 h-7 flex-shrink-0 mt-0.5" style={{ color: '#f46c44' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-lg text-gray-700">{req}</span>
-                </div>
-              ))}
-            </div>
-            <div className="space-y-5">
-              {['TOEFL/IELTS/Advanced scores', 'Academic Resume/CV', 'Portfolio (for specific courses)', 'Statement of Purpose (SOP)'].map((req, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <svg className="w-7 h-7 flex-shrink-0 mt-0.5" style={{ color: '#f46c44' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-lg text-gray-700">{req}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How GAway Helps */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16" style={{ color: '#f46c44' }}>
-            How GAway helps
-          </h2>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h3 className="text-3xl font-bold mb-6" style={{ color: '#f46c44' }}>
-                Write Essays That Seal the Deal
-              </h3>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                From the perfect topic to final polish, our essay experts guide you on how to write a personal statement and supplemental essays that show why they belong on campus.
-              </p>
-            </div>
-            <div>
-              <img
-                src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=500&fit=crop"
-                alt="Essay writing"
-                className="w-full h-[500px] object-cover rounded-lg shadow-lg"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Admission Process Roadmap */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16" style={{ color: '#f46c44' }}>
-            Admission Process Roadmap
-          </h2>
-
-          <div className="relative">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4">
-              {[
-                { num: 1, text: 'Profile Evaluation' },
-                { num: 2, text: 'Exam Preparation' },
-                { num: 3, text: 'University Shortlisting' },
-                { num: 4, text: 'Application Filing' },
-                { num: 5, text: 'Visa & Enrollment' },
-                { num: 6, text: 'Pre-Departure & Visa Preparation' }
-              ].map((step, i) => (
-                <div key={i} className="flex flex-col items-center text-center">
-                  <div className="w-20 h-20 rounded-full text-white flex items-center justify-center text-3xl font-bold mb-4 shadow-lg" style={{ backgroundColor: '#f46c44' }}>
-                    {step.num}
-                  </div>
-                  <p className="text-gray-700 font-semibold text-lg max-w-[150px]">{step.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Scholarships */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-4" style={{ color: '#f46c44' }}>
-            Scholarships to Study in United Kingdom
-          </h2>
-          <p className="text-center text-gray-600 mb-16 max-w-4xl mx-auto text-lg">
-            There are many scholarships offered by the UK government, universities and private organizations to help you cover the tuition fees of your course and other costs of living. Here are some of the scholarships you can apply for:
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="space-y-5">
-              {['Chevening Scholarships', 'Commonwealth Scholarships', 'Rhodes Scholarship', 'Gates Cambridge Scholarship', 'Erasmus Mundus Joint Master Degrees', 'GREAT Scholarships'].map((sch, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <svg className="w-7 h-7 flex-shrink-0 mt-0.5" style={{ color: '#f46c44' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-lg text-gray-700">{sch}</span>
-                </div>
-              ))}
-            </div>
-            <div className="space-y-5">
-              {['Felix Scholarships', 'Marshall Scholarships'].map((sch, i) => (
-                <div key={i} className="flex items-start gap-4">
-                  <svg className="w-7 h-7 flex-shrink-0 mt-0.5" style={{ color: '#f46c44' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-lg text-gray-700">{sch}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Image Testimonials */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-
-          <ImageTestimonial />
-        </div>
-      </section>
-
-      {/* Case Studies */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4" style={{ color: '#f46c44' }}>
-              Case Studies
-            </h2>
-            <p className="text-xl text-gray-600">
-              Real student journeys, real results. Carefully curated outcomes.
-            </p>
-          </div>
-          {/* Case Studies component can be added here */}
-        </div>
-      </section>
-
-      {/* Call to Action */}
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
         <div className="max-w-5xl mx-auto text-center px-4">
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-8 uppercase tracking-wide">
+          <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} className="text-5xl md:text-6xl font-bold text-white mb-8 uppercase tracking-wide">
             TOWARD THE <span className="line-through">CONQUEST OF</span> ADMISSION
           </h2>
-          <p className="text-xl text-white mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }} className="text-xl text-white mb-10 max-w-3xl mx-auto leading-relaxed">
             If you&apos;re interested in Ivy Coach&apos;s college counseling, fill out our contact form or schedule a free consultation to learn more and get in touch.
           </p>
-          <button className="bg-white text-orange-500 px-12 py-4 rounded-lg text-xl font-semibold hover:bg-gray-100 transition shadow-lg">
+          <button className="bg-white text-orange-500 px-6 py-2 rounded-lg text-xl font-semibold hover:bg-gray-100 transition shadow-lg">
             GET STARTED
           </button>
         </div>
