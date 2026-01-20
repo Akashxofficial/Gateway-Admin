@@ -1,40 +1,11 @@
 import Image from "next/image";
-import { getPageInformationBySlug } from "@/lib/api/pageInformation";
 import type { PageInformation } from "@/lib/api/pageInformation";
-import IvyLeagueNavigation from "@/components/IvyLeagueNavigation";
 import ImageTestimonial from "@/components/ImageTestimonial";
 import IvyLeagueUniversitySlider from "@/components/IvyLeagueUniversitySlider";
-import { Footer } from "@/components/Footer";
 import VideoBackground from "@/components/VideoBackground";
 import StatisticsSlider from "@/components/StatisticsSlider";
 import OffersSlider, { AdmissionRequirementsUK, HowGawayHelps, IvyLeagueSection, ScholarshipRequirements } from "@/components/PageComponent/DistinationSliders";
 import CaseStudy from "@/components/PageComponent/CaseStudy";
-import { getImageBySlug } from "@/lib/api/pageInformation";
-
-// Force dynamic rendering - no caching
-export const dynamic = 'force-dynamic';
-export const revalidate = 0; // Always revalidate
-export const fetchCache = 'force-no-store';
-
-// Metadata for SEO
-export async function generateMetadata() {
-  try {
-    const pageData = await getPageInformationBySlug('ivy-league');
-    
-    return {
-      title: pageData?.metaTitle || pageData?.title || 'Ivy League Universities - GAway Prep',
-      description: pageData?.metaDescription || pageData?.subTitle || 'Your path to the Ivy League Universities',
-      keywords: Array.isArray(pageData?.keywords) ? pageData.keywords.join(', ') : (pageData?.keywords || 'ivy league, harvard, yale, princeton, study in usa, education, study abroad'),
-    };
-  } catch (error) {
-    console.error('Error generating metadata:', error);
-    return {
-      title: 'Ivy League Universities - GAway Prep',
-      description: 'Your path to the Ivy League Universities',
-      keywords: 'ivy league, harvard, yale, princeton, study in usa, education, study abroad',
-    };
-  }
-}
 
 // Default fallback values
 const defaultImages = [
@@ -65,20 +36,20 @@ const defaultUniversities: University[] = [
 
 const defaultNewsDaily = [
   {
-    uni: 'Harvard University',
-    text: 'Harvard University Class of 2028 Early Action Admission Rate is 7.2%',
+    uni: 'University',
+    text: 'University Class of 2028 Early Action Admission Rate',
     date: 'December 15, 2023',
     img: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop'
   },
   {
-    uni: 'Cornell University',
-    text: 'Cornell University Class of 2028 Early Decision Admission Rate is 17.9%',
+    uni: 'University',
+    text: 'University Class of 2028 Early Decision Admission Rate',
     date: 'December 15, 2023',
     img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop'
   },
   {
-    uni: 'Yale University',
-    text: 'Yale University Class of 2028 Early Action Admission Rate is 9.0%',
+    uni: 'University',
+    text: 'University Class of 2028 Early Action Admission Rate',
     date: 'December 15, 2023',
     img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop'
   }
@@ -104,9 +75,9 @@ function getSectionData(pageData: PageInformation | null, sectionType: string) {
 function getHeroData(pageData: PageInformation | null) {
   const heroSection = getSectionData(pageData, 'hero_section');
   return {
-    title: heroSection?.title || pageData?.title || "Your path to the\nIvy League Universities",
+    title: heroSection?.title || pageData?.title || "Your path to\nUniversities",
     subtitle: heroSection?.subtitle || pageData?.subTitle || "",
-    description: heroSection?.description || "GAway is a league of its own. We help you get into the Ivy League and other top universities in the USA, UK, and Canada. We'll help you get into the Ivy League and top graduate schools.",
+    description: heroSection?.description || "GAway helps you get into top universities. We'll guide you through the application process and help you achieve your academic goals.",
     backgroundImage: pageData?.heroImage || null,
     backgroundImage1: pageData?.roadmapImage || null,
     backgroundImage2: pageData?.mobileRoadmapImage || null,
@@ -114,20 +85,26 @@ function getHeroData(pageData: PageInformation | null) {
   };
 }
 
-export default async function IvyLeaguePage() {
-  // Fetch page data using SSR
-  let pageData: PageInformation | null = null;
-  try {
-    pageData = await getPageInformationBySlug('ivy-league');
-    console.log('✅ Ivy League page data fetched:', {
-      hasData: !!pageData,
-      sectionsCount: pageData?.sections?.length || 0,
-      status: pageData?.status
-    });
-  } catch (error) {
-    console.error('❌ Error fetching Ivy League page data:', error);
-    // Continue with null pageData, will use defaults
-  }
+// Helper function to get default page name from slug
+function getPageNameFromSlug(slug: string): string {
+  const pageNames: Record<string, string> = {
+    'usa-universities': 'USA Universities',
+    'uk-universities': 'UK Universities',
+    'germany-public-universities': 'Germany Public Universities',
+    'italy-france': 'Italy & France',
+    'canada-australia': 'Canada & Australia',
+    'ivy-league': 'Ivy League',
+  };
+  return pageNames[slug] || slug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
+
+interface UniversityPageTemplateProps {
+  slug: string;
+  pageData: PageInformation | null;
+}
+
+export default function UniversityPageTemplate({ slug, pageData }: UniversityPageTemplateProps) {
+  const pageName = getPageNameFromSlug(slug);
   
   // Extract data from API or use defaults
   const heroData = getHeroData(pageData);
@@ -151,23 +128,23 @@ export default async function IvyLeaguePage() {
   const successRate = trackRecordSection?.successRate || "98%";
   const successDescription = trackRecordSection?.successDescription || "of our students are admitted to atleast 1 of their top 5 college choices";
   
-  const trackRecordTitle = trackRecordSection?.title || "IVY COACH'S COLLEGE\nADMISSIONS TRACK RECORD";
-  const trackRecordDescription = trackRecordSection?.description || "The percentage of Ivy Coach's packaged clients over the last 10 years\nwho earned admission to the following schools in the Early round.";
+  const trackRecordTitle = trackRecordSection?.title || `${pageName.toUpperCase()}\nADMISSIONS TRACK RECORD`;
+  const trackRecordDescription = trackRecordSection?.description || "The percentage of GAway's packaged clients over the last 10 years\nwho earned admission to the following schools.";
   const trackRecordNote = trackRecordSection?.note || trackRecordSection?.subTitle || "At most of these schools, we typically have 3-4 applicants annually.";
   
-  const newsTitle = newsSection?.title || "THE IVY COACH DAILY";
-  const newsSubtitle = newsSection?.subtitle || '"Way To Tell It Like It Is, Ivy Coach"';
+  const newsTitle = newsSection?.title || `${pageName.toUpperCase()} NEWS`;
+  const newsSubtitle = newsSection?.subtitle || `"Latest Updates from ${pageName}"`;
   
   const ctaSection = getSectionData(pageData, 'cta_section');
   const ctaTitle = ctaSection?.title || "TOWARD THE CONQUEST OF ADMISSION";
-  const ctaDescription = ctaSection?.description || "If you're interested in Ivy Coach's college counseling, fill out our contact form or schedule a free consultation to learn more and get in touch.";
+  const ctaDescription = ctaSection?.description || `If you're interested in studying, fill out our contact form or schedule a free consultation to learn more and get in touch.`;
   const ctaButtonText = ctaSection?.buttonText || "GET STARTED";
 
   // Get Offers Slider data
   const offersSection = getSectionData(pageData, 'offers_slider') || getSectionData(pageData, 'slider_card');
   const offersData = offersSection?.offers || offersSection?.items || [];
 
-  // Get Ivy League Section data (What Makes Ivy league Special)
+  // Get Ivy League Section data (What Makes X Special)
   const ivyLeagueSpecialSection = getSectionData(pageData, 'why_choose_us') || getSectionData(pageData, 'ivy_league_section');
   const ivyLeagueCards = ivyLeagueSpecialSection?.cards || ivyLeagueSpecialSection?.items || [];
 
@@ -194,6 +171,9 @@ export default async function IvyLeaguePage() {
   const heroBgImage = heroData.backgroundImage || null;
   const bgVideo1 = heroData.backgroundImage1 || "/0_Queens_University_Belfast_Belfast_1920x1080.mp4";
   const bgVideo2 = heroData.backgroundImage2 || "/4730892_Cheyenne_Wyoming_1920x1080.mp4";
+  
+  // Get background images for roadmap
+  const roadmapImage = heroData.backgroundImage1 || pageData?.roadmapImage || null;
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
@@ -237,7 +217,7 @@ export default async function IvyLeaguePage() {
       <section className="py-12 bg-white">
         <div className="mx-auto px-5">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }} className="text-[2.6rem] font-bold text-center mb-6 text-gray-600">
-            {getSectionData(pageData, 'university_network_section')?.title || universitiesSection?.title || "Our Global University Network"}
+            {getSectionData(pageData, 'university_network_section')?.title || universitiesSection?.title || `Our ${pageName} Network`}
           </h2>
           {universities && universities.length > 0 && universities !== defaultUniversities ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -260,7 +240,7 @@ export default async function IvyLeaguePage() {
         </div>
       </section>
 
-      {/* Ivy Coach's College Admissions Track Record - Dynamic */}
+      {/* Track Record - Dynamic */}
       <section className="py-5 bg-gray-50" style={{ overflow: 'visible' }}>
         <div className="mb-8 mx-auto" style={{ borderTop: '3px solid rgb(94, 77, 77)', width: '70%' }}></div>
 
@@ -300,9 +280,7 @@ export default async function IvyLeaguePage() {
 
               <div className="w-full">
                 <div className="relative w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] lg:w-[450px] lg:h-[450px]">
-                  {/* Slider */}
                   <div className="lg:relative lg:w-[92%] lg:h-[91%]">
-                    {/* MASKED IMAGE */}
                     <div
                       className="lg:absolute inset-0 z-10 lg:top-[41px] lg:left-[38px]"
                       style={{
@@ -318,8 +296,6 @@ export default async function IvyLeaguePage() {
                         borderRadius: "100px",
                       }}
                     />
-
-                    {/* FRAME BORDER IMAGE */}
                     <img
                       src="/images/student-rank-img.png"
                       alt="frame"
@@ -329,7 +305,6 @@ export default async function IvyLeaguePage() {
                 </div>
               </div>
 
-              {/* 98% Stat - Dynamic */}
               <div className="text-left border-l-2 border-b-2 p-4 mt-0">
                 <div className="text-5xl" style={{ color: '#f46c44' }}>{successRate}</div>
                 <p className="text-sm text-gray-700">{successDescription}</p>
@@ -356,13 +331,12 @@ export default async function IvyLeaguePage() {
                   </div>
                 </div>
                 <div className="space-y-0">
-                  {universities.map((uni, i) => (
+                  {universities.map((uni: any, i: number) => (
                     <div key={i} className="flex items-center">
-                      {/* University Icon/Logo */}
                       <div className="w-16 h-10 rounded-full flex items-center justify-center flex-shrink-0">
                         <Image
-                          src={uni.logo}
-                          alt={uni.alt}
+                          src={uni.logo || uni.image || defaultUniversities[0]?.logo || ""}
+                          alt={uni.alt || uni.name || `University ${i + 1}`}
                           width={60}
                           height={60}
                           className="object-contain w-full h-full"
@@ -377,7 +351,6 @@ export default async function IvyLeaguePage() {
                       </div>
                       <div className="h-10 mr-3 w-0.5 bg-gray-300"></div>
 
-                      {/* GAway Student Admit Rate Column - Orange */}
                       <div className="flex-10">
                         <div style={{ marginLeft: '2px', position: 'relative' }}>
                           <div className=" rounded-full h-4 relative" style={{ overflow: 'visible' }}>
@@ -414,7 +387,7 @@ export default async function IvyLeaguePage() {
         </div>
       </section>
 
-      {/* The Ivy Coach Daily - Dynamic */}
+      {/* News Section - Dynamic */}
       <section className="py-12 bg-[#f5f1f0] overflow-visible">
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
@@ -426,7 +399,7 @@ export default async function IvyLeaguePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10" style={{ width: '100%' }}>
             {newsDaily.map((item: any, i: number) => (
-              <div key={`ivy-coach-${i}`} className=" overflow-hidden transition w-full">
+              <div key={`news-${i}`} className=" overflow-hidden transition w-full">
                 <Image
                   src={item.img || item.image || defaultNewsDaily[0].img}
                   alt={item.uni || item.title || `News item ${i + 1}`}
@@ -454,10 +427,9 @@ export default async function IvyLeaguePage() {
       </section>
       
       {/* Dynamic Sections from Admin Panel */}
-      {/* Offers Slider - Dynamic */}
       <OffersSlider data={offersData.length > 0 ? offersData : undefined} />
       
-      {/* What Makes Ivy league Special - Dynamic */}
+      {/* What Makes X Special - Dynamic */}
       {ivyLeagueCards.length > 0 ? (
         <section
           className="min-h-screen py-16 px-4 md:px-8 flex items-center justify-center"
@@ -468,7 +440,7 @@ export default async function IvyLeaguePage() {
           <div className="max-w-7xl w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             <div className="w-full lg:w-1/2 relative">
               <h4 className="text-[2.6rem] mb-6 text-[#f46c44] font-semibold" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-                {ivyLeagueSpecialSection?.title || "What Makes Ivy league Special"}
+                {ivyLeagueSpecialSection?.title || `What Makes ${pageName} Special`}
               </h4>
               <div className="relative perspective-1000">
                 {ivyLeagueCards.map((card: any, index: number) => (
@@ -509,7 +481,7 @@ export default async function IvyLeaguePage() {
                 {ivyLeagueSpecialSection?.image ? (
                   <Image
                     src={ivyLeagueSpecialSection.image}
-                    alt={ivyLeagueSpecialSection?.title || "Ivy League Special"}
+                    alt={ivyLeagueSpecialSection?.title || `${pageName} Special`}
                     width={600}
                     height={600}
                     className="w-full h-full object-cover"
@@ -524,7 +496,7 @@ export default async function IvyLeaguePage() {
                     }}
                   >
                     <defs>
-                      <clipPath id="til" clipPathUnits="userSpaceOnUse">
+                      <clipPath id={`til-${slug}`} clipPathUnits="userSpaceOnUse">
                         <path d="M45.235 17.808Q21.782 19.632 22.621 47.924L22.412 220.324Q21.782 245.981 51.393 252.749L204.127 281.166Q233.417 288.339 235.357 260.421L235.97 53.425Q236.438 16.291 204.181 17.969L49.519 17.358Z" />
                       </clipPath>
                     </defs>
@@ -534,7 +506,7 @@ export default async function IvyLeaguePage() {
                       y="0"
                       width="100%"
                       height="100%"
-                      clipPath="url(#til)"
+                      clipPath={`url(#til-${slug})`}
                       preserveAspectRatio="xMidYMid slice"
                     />
                     <path
@@ -562,7 +534,7 @@ export default async function IvyLeaguePage() {
                 {admissionReqSection.title || "Admission Requirements for"}
               </span>
               <span className="block">
-                {admissionReqSection.subTitle || "United Kingdom Study Abroad"}
+                {admissionReqSection.subTitle || `${pageName} Study Abroad`}
               </span>
             </h2>
             {admissionReqSection.description && (
@@ -592,7 +564,7 @@ export default async function IvyLeaguePage() {
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-[2.6rem] font-bold text-center mb-12" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-              {howGawayHelpsSection.title || "How GAway helps Scholarships to Study in United Kingdom"}
+              {howGawayHelpsSection.title || `How GAway helps Scholarships to Study in ${pageName}`}
             </h2>
             {howGawayHelpsSection.description && (
               <p className="text-center text-lg text-gray-700 mb-8">
@@ -624,16 +596,16 @@ export default async function IvyLeaguePage() {
             <span className="text-[#656565]"> {getSectionData(pageData, 'roadmap_section')?.subTitle || "Roadmap"}</span>
           </h2>
           <div className="max-w-5xl mx-auto flex justify-center">
-            {heroData.backgroundImage3 || getSectionData(pageData, 'roadmap_section')?.image ? (
+            {roadmapImage || getSectionData(pageData, 'roadmap_section')?.image ? (
               <Image 
-                src={heroData.backgroundImage3 || getSectionData(pageData, 'roadmap_section')?.image} 
-                alt="ivy-admission-process" 
+                src={roadmapImage || getSectionData(pageData, 'roadmap_section')?.image} 
+                alt={`${slug}-admission-process`} 
                 width={1000} 
                 height={800} 
                 className="w-full h-full" 
               />
             ) : (
-              <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full" />
+              <Image src="/images/00123.png" alt={`${slug}-admission-process`} width={1000} height={800} className="w-full h-full" />
             )}
           </div>
         </div>
@@ -682,7 +654,7 @@ export default async function IvyLeaguePage() {
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
         <div className="max-w-5xl mx-auto text-center px-4">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} className="text-5xl md:text-6xl font-bold text-white mb-8 uppercase tracking-wide">
-            {ctaTitle.includes('<span') ? (
+            {ctaTitle.includes('<span') || ctaTitle.includes('CONQUEST') ? (
               <>
                 TOWARD THE <span className="line-through">CONQUEST OF</span> ADMISSION
               </>

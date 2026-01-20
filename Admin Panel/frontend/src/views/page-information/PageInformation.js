@@ -2329,31 +2329,183 @@ const PageInformation = () => {
     }
 
     try {
-      // Ensure sections is always an array
+      // Ensure sections is always an array and properly formatted
       const safeSections = Array.isArray(sections) ? sections : []
+      
+      // Validate and normalize sections before sending
+      const normalizedSections = safeSections.map((section, index) => {
+        // Ensure section has required structure
+        if (!section || typeof section !== 'object') {
+          console.warn(`⚠️ Section at index ${index} is invalid, skipping`)
+          return null
+        }
+        
+        // Ensure type exists and is lowercase
+        const sectionType = (section.type || '').trim().toLowerCase()
+        if (!sectionType) {
+          console.warn(`⚠️ Section at index ${index} has no type, skipping`)
+          return null
+        }
+        
+        // Return normalized section
+        return {
+          type: sectionType,
+          order: typeof section.order === 'number' ? section.order : (index + 1),
+          data: section.data || {},
+        }
+      }).filter(section => section !== null) // Remove invalid sections
+      
+      console.log(`📝 Preparing ${normalizedSections.length} sections for submission`)
+      if (normalizedSections.length > 0) {
+        console.log('📋 First section sample:', JSON.stringify(normalizedSections[0], null, 2))
+      }
+      
+      // Prepare submit data - only send fields that are defined in the model
       const submitData = {
-        ...formData,
-        sections: safeSections,
+        pageType: formData.pageType || 'home_page',
+        title: formData.title?.trim() || '',
+        subTitle: formData.subTitle?.trim() || '',
+        slug: formData.slug?.trim().toLowerCase() || '',
+        metaTitle: formData.metaTitle?.trim() || '',
+        metaDescription: formData.metaDescription?.trim() || '',
+        status: formData.status || 'Draft',
+        isFeatured: formData.isFeatured || 'No',
+        heroImage: formData.heroImage || '',
+        heroImagePublicId: formData.heroImagePublicId || '',
+        roadmapImage: formData.roadmapImage || '',
+        roadmapImagePublicId: formData.roadmapImagePublicId || '',
+        mobileRoadmapImage: formData.mobileRoadmapImage || '',
+        mobileRoadmapImagePublicId: formData.mobileRoadmapImagePublicId || '',
+        universityCapBg: formData.universityCapBg || '',
+        universityCapBgPublicId: formData.universityCapBgPublicId || '',
+        universitySliderBg: formData.universitySliderBg || '',
+        universitySliderBgPublicId: formData.universitySliderBgPublicId || '',
+        immigrationServicesBg: formData.immigrationServicesBg || '',
+        immigrationServicesBgPublicId: formData.immigrationServicesBgPublicId || '',
+        sections: normalizedSections,
         keywords: formData.keywords
-          ? formData.keywords.split(',').map(k => k.trim())
+          ? formData.keywords.split(',').map(k => k.trim()).filter(k => k)
           : [],
         tags: formData.tags
-          ? formData.tags.split(',').map(t => t.trim())
+          ? formData.tags.split(',').map(t => t.trim()).filter(t => t)
           : [],
+        canonicalUrl: formData.canonicalUrl?.trim() || '',
       }
+      
+      console.log('📤 Submitting form data:', { 
+        editingId, 
+        sectionsCount: normalizedSections.length,
+        submitDataKeys: Object.keys(submitData),
+        pageType: submitData.pageType,
+        status: submitData.status,
+        keywordsCount: Array.isArray(submitData.keywords) ? submitData.keywords.length : 0,
+        tagsCount: Array.isArray(submitData.tags) ? submitData.tags.length : 0,
+        hasCanonicalUrl: !!submitData.canonicalUrl
+      })
       
       let response
       if (editingId) {
         // Update existing page
-        response = await pageInformationService.updatePageInformation(editingId, submitData)
-        if (response.success) {
+        try {
+          response = await pageInformationService.updatePageInformation(editingId, submitData)
+          console.log('📥 Update response:', {
+            success: response?.success,
+            hasData: !!response?.data,
+            message: response?.message,
+            sectionsCount: response?.data?.sections?.length || 0
+          })
+        } catch (updateError) {
+          console.error('❌ Update API error:', updateError)
+          throw updateError
+        }
+        
+        if (response && response.success) {
           setSuccess('Page information updated successfully!')
-          // Optionally navigate back to list after 2 seconds
-          setTimeout(() => {
-            if (navigate && location.pathname.includes('/website/pages')) {
-              navigate('/website/pages')
+          setError('')
+          
+          // Log updated sections count
+          if (response.data && Array.isArray(response.data.sections)) {
+            console.log(`✅ Page updated with ${response.data.sections.length} sections`)
+          }
+          
+          // Update form data immediately with response data
+          if (response.data) {
+            const pageData = response.data
+            const reloadedSections = Array.isArray(pageData.sections) ? pageData.sections : []
+            
+            setFormData({
+              pageType: pageData.pageType || formData.pageType,
+              title: pageData.title || '',
+              subTitle: pageData.subTitle || '',
+              slug: pageData.slug || '',
+              metaTitle: pageData.metaTitle || '',
+              metaDescription: pageData.metaDescription || '',
+              status: pageData.status || 'Draft',
+              isFeatured: pageData.isFeatured || 'No',
+              heroImage: pageData.heroImage || '',
+              heroImagePublicId: pageData.heroImagePublicId || '',
+              roadmapImage: pageData.roadmapImage || '',
+              roadmapImagePublicId: pageData.roadmapImagePublicId || '',
+              mobileRoadmapImage: pageData.mobileRoadmapImage || '',
+              mobileRoadmapImagePublicId: pageData.mobileRoadmapImagePublicId || '',
+              universityCapBg: pageData.universityCapBg || '',
+              universityCapBgPublicId: pageData.universityCapBgPublicId || '',
+              universitySliderBg: pageData.universitySliderBg || '',
+              universitySliderBgPublicId: pageData.universitySliderBgPublicId || '',
+              immigrationServicesBg: pageData.immigrationServicesBg || '',
+              immigrationServicesBgPublicId: pageData.immigrationServicesBgPublicId || '',
+              keywords: Array.isArray(pageData.keywords) ? pageData.keywords.join(', ') : (pageData.keywords || ''),
+              tags: Array.isArray(pageData.tags) ? pageData.tags.join(', ') : (pageData.tags || ''),
+              canonicalUrl: pageData.canonicalUrl || '',
+            })
+            setSections(reloadedSections)
+            console.log(`🔄 Form data updated with ${reloadedSections.length} sections`)
+          }
+          
+          // Reload page data from server to ensure we have latest
+          setTimeout(async () => {
+            try {
+              const reloadResponse = await pageInformationService.getPageInformation(editingId)
+              if (reloadResponse && reloadResponse.success && reloadResponse.data) {
+                const pageData = reloadResponse.data
+                const reloadedSections = Array.isArray(pageData.sections) ? pageData.sections : []
+                console.log(`🔄 Reloaded page from server with ${reloadedSections.length} sections`)
+                
+                setFormData({
+                  pageType: pageData.pageType || formData.pageType,
+                  title: pageData.title || '',
+                  subTitle: pageData.subTitle || '',
+                  slug: pageData.slug || '',
+                  metaTitle: pageData.metaTitle || '',
+                  metaDescription: pageData.metaDescription || '',
+                  status: pageData.status || 'Draft',
+                  isFeatured: pageData.isFeatured || 'No',
+                  heroImage: pageData.heroImage || '',
+                  heroImagePublicId: pageData.heroImagePublicId || '',
+                  roadmapImage: pageData.roadmapImage || '',
+                  roadmapImagePublicId: pageData.roadmapImagePublicId || '',
+                  mobileRoadmapImage: pageData.mobileRoadmapImage || '',
+                  mobileRoadmapImagePublicId: pageData.mobileRoadmapImagePublicId || '',
+                  universityCapBg: pageData.universityCapBg || '',
+                  universityCapBgPublicId: pageData.universityCapBgPublicId || '',
+                  universitySliderBg: pageData.universitySliderBg || '',
+                  universitySliderBgPublicId: pageData.universitySliderBgPublicId || '',
+                  immigrationServicesBg: pageData.immigrationServicesBg || '',
+                  immigrationServicesBgPublicId: pageData.immigrationServicesBgPublicId || '',
+                  keywords: Array.isArray(pageData.keywords) ? pageData.keywords.join(', ') : (pageData.keywords || ''),
+                  tags: Array.isArray(pageData.tags) ? pageData.tags.join(', ') : (pageData.tags || ''),
+                  canonicalUrl: pageData.canonicalUrl || '',
+                })
+                setSections(reloadedSections)
+              }
+            } catch (reloadErr) {
+              console.error('❌ Error reloading page data:', reloadErr)
             }
-          }, 2000)
+          }, 500)
+        } else {
+          const errorMsg = response?.message || response?.error || 'Failed to update page information'
+          setError(errorMsg)
+          console.error('❌ Update failed:', response)
         }
       } else {
         // Create new page
@@ -2519,6 +2671,11 @@ const PageInformation = () => {
                       <option value="contact_page">Contact Page</option>
                       <option value="city_page">City Page</option>
                       <option value="ivy_league">Ivy League</option>
+                      <option value="usa_universities">USA Universities</option>
+                      <option value="uk_universities">UK Universities</option>
+                      <option value="germany_public_universities">Germany Public Universities</option>
+                      <option value="italy_france">Italy & France</option>
+                      <option value="canada_australia">Canada & Australia</option>
                       <option value="other">Other</option>
                     </CFormSelect>
                   </CCol>
@@ -2611,12 +2768,25 @@ const PageInformation = () => {
               </div>
 
               {/* Page Type Specific Fields */}
-              {(formData.pageType === 'home_page' || formData.pageType === 'city_page' || formData.pageType === 'ivy_league' || formData.pageType === 'other') && (
+              {(formData.pageType === 'home_page' || 
+                formData.pageType === 'city_page' || 
+                formData.pageType === 'ivy_league' ||
+                formData.pageType === 'usa_universities' ||
+                formData.pageType === 'uk_universities' ||
+                formData.pageType === 'germany_public_universities' ||
+                formData.pageType === 'italy_france' ||
+                formData.pageType === 'canada_australia' ||
+                formData.pageType === 'other') && (
                 <div className="mb-4">
                   <h6 className="mb-3">
                     {formData.pageType === 'home_page' ? 'Home Page Images' : 
                      formData.pageType === 'city_page' ? 'City Page Fields' : 
-                     formData.pageType === 'ivy_league' ? 'Ivy League Page Fields' : 
+                     formData.pageType === 'ivy_league' ? 'Ivy League Page Fields' :
+                     formData.pageType === 'usa_universities' ? 'USA Universities Page Fields' :
+                     formData.pageType === 'uk_universities' ? 'UK Universities Page Fields' :
+                     formData.pageType === 'germany_public_universities' ? 'Germany Public Universities Page Fields' :
+                     formData.pageType === 'italy_france' ? 'Italy & France Page Fields' :
+                     formData.pageType === 'canada_australia' ? 'Canada & Australia Page Fields' :
                      'Page Images'}
                   </h6>
                   <CRow>
@@ -2630,9 +2800,16 @@ const PageInformation = () => {
                         {renderImageField('Immigration Services Background', 'immigrationServicesBg')}
                       </>
                     )}
-                    {(formData.pageType === 'ivy_league' || formData.pageType === 'city_page' || formData.pageType === 'other') && (
+                    {(formData.pageType === 'ivy_league' || 
+                      formData.pageType === 'city_page' || 
+                      formData.pageType === 'usa_universities' ||
+                      formData.pageType === 'uk_universities' ||
+                      formData.pageType === 'germany_public_universities' ||
+                      formData.pageType === 'italy_france' ||
+                      formData.pageType === 'canada_australia' ||
+                      formData.pageType === 'other') && (
                       <>
-                        {/* Additional image fields for ivy-league, city-page, and other pages */}
+                        {/* Additional image fields for university pages */}
                         {renderImageField('Background Image 1', 'roadmapImage')}
                         {renderImageField('Background Image 2', 'mobileRoadmapImage')}
                         {renderImageField('Background Image 3', 'universityCapBg')}

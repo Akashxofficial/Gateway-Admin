@@ -16,16 +16,35 @@ export function Footer() {
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative bg-white">
 
             {/* ================= TOP IMAGE STRIP with Orange Border - Positioned Upward ================= */}
-            <div className="w-full mb-12 -mt-16 md:-mt-30">
-              <div className="relative h-[180px] md:h-[200px] rounded-[50px] border-[20px] border-[#f46c44] overflow-hidden bg-white shadow-xl">
-                <img
-                  src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=300&fit=crop"
-                  alt="European Landmarks"
-                  className="w-full h-full object-cover grayscale"
-                  style={{ objectPosition: "center center" }}
-                />
-              </div>
-            </div>
+           <div className="w-full mb-16 -mt-20">
+
+  {/* OUTER ORANGE FRAME */}
+  <div className="relative h-[180px] md:h-[220px] rounded-[70px] bg-[#f46c44] shadow-xl">
+
+    {/* INNER IMAGE HOLDER */}
+    <div
+      className="
+        absolute
+        top-[14px]
+        bottom-[14px]
+        left-[40px]
+        right-[40px]
+        rounded-[45px]
+        overflow-hidden
+        bg-white
+      "
+    >
+      <img
+        src="/images/footer-image.png"
+        alt="European landmarks"
+        className="w-full h-full object-cover grayscale"
+      />
+    </div>
+
+  </div>
+
+</div>
+
 
             <div className="flex flex-col lg:flex-row">
 
@@ -60,31 +79,41 @@ export function Footer() {
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">USA Universities</li>
+            ">
+                         <Link href="/usa-universities">USA Universities</Link>
+                       </li>
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">UK Universities</li>
+            ">
+                         <Link href="/uk-universities">UK Universities</Link>
+                       </li>
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Germany Public Universities</li>
+            ">
+                         <Link href="/germany-public-universities">Germany Public Universities</Link>
+                       </li>
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Italy & France</li>
+            ">
+                         <Link href="/italy-france">Italy & France</Link>
+                       </li>
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Canada & Australia</li>
+            ">
+                         <Link href="/canada-australia">Canada & Australia</Link>
+                       </li>
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[3px] h-full bg-[#e87a4d] rounded-full"></div>
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
                 </div>
 
                 {/* SERVICES */}
@@ -122,7 +151,7 @@ export function Footer() {
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[3px] h-full bg-[#e87a4d] rounded-full"></div>
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
                 </div>
 
                 {/* RESOURCES */}
@@ -160,7 +189,7 @@ export function Footer() {
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[3px] h-full bg-[#e87a4d] rounded-full"></div>
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
                 </div>
 
                 {/* CONNECT */}
@@ -212,8 +241,8 @@ export function Footer() {
             <p>© 2023 GAway Global. All rights reserved.</p>
 
             <div className="flex gap-4 md:gap-6 flex-wrap justify-center">
-              <a href="#" className="hover:text-orange-500">Privacy Policy</a>
-              <a href="#" className="hover:text-orange-500">Terms of Service</a>
+              <a href="privacy-policy" className="hover:text-orange-500">Privacy Policy</a>
+              <a href="terms-condition" className="hover:text-orange-500">Terms of Service</a>
               <a href="#" className="hover:text-orange-500">Cookie Policy</a>
             </div>
           </div>

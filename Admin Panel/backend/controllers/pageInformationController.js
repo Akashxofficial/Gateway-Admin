@@ -58,17 +58,60 @@ exports.getPageInformations = async (req, res) => {
 // @access  Public
 exports.getPageInformationBySlug = async (req, res) => {
   try {
-    const page = await PageInformation.findOne({ 
-      slug: req.params.slug,
-      status: 'Published'
-    })
+    const slug = req.params.slug.toLowerCase().trim();
     
-    if (!page) {
-      return res.status(404).json({ success: false, message: 'Page not found' })
+    console.log(`🔍 Looking for page with slug: "${slug}"`)
+    
+    // In development, allow both Published and Draft pages
+    // In production, only allow Published pages
+    const isDevelopment = process.env.NODE_ENV !== 'production'
+    
+    let page
+    if (isDevelopment) {
+      // Development: Try to find page regardless of status
+      page = await PageInformation.findOne({ slug: slug })
+      
+      if (page && page.status === 'Draft') {
+        console.warn(`⚠️ Page "${slug}" found but status is "Draft". Returning in development mode.`)
+      }
+    } else {
+      // Production: Only find Published pages
+      page = await PageInformation.findOne({ 
+        slug: slug,
+        status: 'Published'
+      })
     }
     
-    res.json({ success: true, data: page })
+    if (!page) {
+      // Check if page exists with different status
+      const anyPage = await PageInformation.findOne({ slug: slug })
+      
+      if (anyPage) {
+        if (anyPage.status === 'Draft' && !isDevelopment) {
+          return res.status(404).json({ 
+            success: false, 
+            message: `Page found but status is "Draft". Please update status to "Published" in admin panel.`,
+            slug: slug,
+            status: anyPage.status
+          })
+        }
+      }
+      
+      return res.status(404).json({ 
+        success: false, 
+        message: `Page not found with slug: "${slug}". Please create the page in admin panel first.`,
+        slug: slug
+      })
+    }
+    
+    console.log(`✅ Page found: "${slug}", Status: "${page.status}"`)
+    res.json({ 
+      success: true, 
+      data: page,
+      ...(page.status === 'Draft' && isDevelopment ? { warning: 'Page is in Draft status' } : {})
+    })
   } catch (error) {
+    console.error('Error in getPageInformationBySlug:', error);
     res.status(500).json({ success: false, message: error.message })
   }
 }
@@ -204,9 +247,23 @@ exports.createPageInformation = async (req, res) => {
 // @access  Private
 exports.updatePageInformation = async (req, res) => {
   try {
+    const pageId = req.params.id
+    
+    if (!pageId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Page ID is required',
+      })
+    }
+
+    console.log('📝 Updating page:', pageId)
+    console.log('📦 Request body keys:', Object.keys(req.body))
+    console.log('📊 Sections count:', Array.isArray(req.body.sections) ? req.body.sections.length : 'not an array')
+
     const {
       keywords,
       tags,
+      sections,
       ...updateData
     } = req.body
 
@@ -223,11 +280,48 @@ exports.updatePageInformation = async (req, res) => {
         : Array.isArray(tags) ? tags : []
     }
 
+    // Ensure sections is properly formatted
+    if (sections !== undefined) {
+      if (Array.isArray(sections)) {
+        // Validate and normalize sections
+        updateData.sections = sections.map((section, index) => {
+          // Ensure each section has required fields
+          const normalizedSection = {
+            type: (section.type || '').trim().toLowerCase(),
+            order: typeof section.order === 'number' ? section.order : (index + 1),
+            data: section.data || {},
+          }
+          
+          // Ensure type is not empty
+          if (!normalizedSection.type) {
+            console.warn(`⚠️ Section at index ${index} has no type, skipping`)
+            return null
+          }
+          
+          return normalizedSection
+        }).filter(section => section !== null) // Remove invalid sections
+        
+        console.log(`✅ Processing ${updateData.sections.length} sections for update`)
+        if (updateData.sections.length > 0) {
+          console.log('📋 First section sample:', JSON.stringify(updateData.sections[0], null, 2))
+        }
+      } else {
+        // If sections is not an array, set to empty array
+        updateData.sections = []
+        console.warn('⚠️ Sections is not an array, setting to empty array')
+      }
+    }
+
+    // Normalize slug to lowercase if provided
+    if (updateData.slug) {
+      updateData.slug = updateData.slug.trim().toLowerCase()
+    }
+
     // If slug is being updated, check for uniqueness
     if (updateData.slug) {
       const existingPage = await PageInformation.findOne({
         slug: updateData.slug,
-        _id: { $ne: req.params.id }
+        _id: { $ne: pageId }
       })
       if (existingPage) {
         return res.status(400).json({
@@ -237,18 +331,59 @@ exports.updatePageInformation = async (req, res) => {
       }
     }
 
+    // Check if page exists
+    const existingPage = await PageInformation.findById(pageId)
+    if (!existingPage) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Page information not found' 
+      })
+    }
+
+    // Ensure all string fields are trimmed and empty strings are preserved (for clearing fields)
+    const fieldsToTrim = [
+      'title', 'subTitle', 'slug', 'metaTitle', 'metaDescription',
+      'heroImage', 'heroImagePublicId',
+      'roadmapImage', 'roadmapImagePublicId',
+      'mobileRoadmapImage', 'mobileRoadmapImagePublicId',
+      'universityCapBg', 'universityCapBgPublicId',
+      'universitySliderBg', 'universitySliderBgPublicId',
+      'immigrationServicesBg', 'immigrationServicesBgPublicId',
+      'canonicalUrl'
+    ]
+    
+    fieldsToTrim.forEach(field => {
+      if (updateData[field] !== undefined) {
+        updateData[field] = typeof updateData[field] === 'string' 
+          ? updateData[field].trim() 
+          : updateData[field]
+      }
+    })
+
+    console.log('📦 Final update data keys:', Object.keys(updateData))
+    console.log('📋 Sections being saved:', Array.isArray(updateData.sections) ? updateData.sections.length : 'not an array')
+    console.log('🔑 Keywords:', Array.isArray(updateData.keywords) ? updateData.keywords.length : 'not an array')
+    console.log('🏷️ Tags:', Array.isArray(updateData.tags) ? updateData.tags.length : 'not an array')
+
     const pageInformation = await PageInformation.findByIdAndUpdate(
-      req.params.id,
+      pageId,
       updateData,
       {
         new: true,
         runValidators: true,
+        upsert: false,
       }
     )
 
     if (!pageInformation) {
-      return res.status(404).json({ success: false, message: 'Page information not found' })
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Page information not found or could not be updated' 
+      })
     }
+
+    console.log('✅ Page updated successfully:', pageInformation._id)
+    console.log('📊 Updated sections count:', Array.isArray(pageInformation.sections) ? pageInformation.sections.length : 0)
 
     res.json({
       success: true,
@@ -256,13 +391,29 @@ exports.updatePageInformation = async (req, res) => {
       data: pageInformation,
     })
   } catch (error) {
+    console.error('❌ Update page error:', error)
+    
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map((err) => err.message)
+      return res.status(400).json({
+        success: false,
+        message: `Validation error: ${messages.join(', ')}`,
+        errors: messages,
+      })
+    }
+    
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
         message: 'Page with this slug already exists',
       })
     }
-    res.status(500).json({ success: false, message: error.message })
+    
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Failed to update page information',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    })
   }
 }
 

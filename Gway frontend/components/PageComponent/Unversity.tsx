@@ -2,17 +2,9 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { usePageImage } from '@/lib/hooks/usePageImages';
 
 export default function UniversitySliderClient() {
   const sliderRef = useRef<HTMLDivElement>(null);
-  
-  // Fetch university slider background image from backend
-  const universitySliderBg = usePageImage(
-    'home',
-    'universitySliderBg',
-    '/shapes/unibg.png'
-  );
 
   useEffect(() => {
     const initSlider = async () => {
@@ -116,7 +108,7 @@ export default function UniversitySliderClient() {
               {/* Background Image */}
               <div
                 className="absolute inset-0 bg-cover bg-center "
-                style={{ backgroundImage: `url('${universitySliderBg || '/shapes/unibg.png'}')` }}
+                style={{ backgroundImage: "url('/shapes/unibg.png')" }}
               />
 
               {/* Logo */}

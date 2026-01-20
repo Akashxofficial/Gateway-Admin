@@ -2,9 +2,44 @@
 
 import { useEffect, useRef } from "react";
 
-export default function ImageTestimonial({font}) {
+export default function ImageTestimonial({font, testimonials, title, description}: {font?: boolean; testimonials?: Array<any>; title?: string; description?: string}) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const AUTO_SLIDE_INTERVAL = 3000;
+
+  // Default testimonials
+  const defaultTestimonials = [
+    {
+      id: 1,
+      name: "Saumya Sharma",
+      text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+      image:
+        "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+    },
+    {
+      id: 2,
+      name: "Aditya Sharma",
+      text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+      image:
+        "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+    },
+    {
+      id: 3,
+      name: "Rohan Gupta",
+      text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+      image:
+        "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+    },
+  ];
+
+  // Use provided testimonials or default
+  const displayTestimonials = testimonials && testimonials.length > 0
+    ? testimonials.map((testimonial: any, index: number) => ({
+        id: testimonial.id || index + 1,
+        name: testimonial.name || testimonial.title || "",
+        text: testimonial.text || testimonial.description || testimonial.testimonial || "",
+        image: testimonial.image || testimonial.imageUrl || "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+      }))
+    : defaultTestimonials;
 
   useEffect(() => {
     const keenSlider = async () => {
@@ -75,42 +110,37 @@ export default function ImageTestimonial({font}) {
     };
 
     keenSlider();
-  }, []);
-
-  const testimonials = [
-    {
-      id: 1,
-      name: "Saumya Sharma",
-      text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-      image:
-        "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-    },
-    {
-      id: 2,
-      name: "Aditya Sharma",
-      text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-      image:
-        "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-    },
-    {
-      id: 3,
-      name: "Rohan Gupta",
-      text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-      image:
-        "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-    },
-  ];
+  }, [displayTestimonials]);
 
   return (
     <section className="py-16" style={{ backgroundColor: '#fff9f4', overflow: 'visible' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ overflow: 'visible' }}>
-        <h2 style={{ fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", transformStyle: 'flat', transformOrigin: 'initial' }} className="text-[2.6rem] font-semibold text-center mb-0">
-          <span style={{ color: '#f46c44' }}>Image</span>{" "}
-          <span className="text-gray-600">Testimonials</span>
-        </h2>
+        {/* Title - Dynamic */}
+        {title ? (
+          <h2 style={{ fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", transformStyle: 'flat', transformOrigin: 'initial' }} className="text-[2.6rem] font-semibold text-center mb-0">
+            <span style={{ color: '#f46c44' }}>{title}</span>
+          </h2>
+        ) : (
+          <h2 style={{ fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", transformStyle: 'flat', transformOrigin: 'initial' }} className="text-[2.6rem] font-semibold text-center mb-0">
+            <span style={{ color: '#f46c44' }}>Image</span>{" "}
+            <span className="text-gray-600">Testimonials</span>
+          </h2>
+        )}
+        
+        {/* Description - Dynamic */}
+        {description ? (
+          <p className="text-gray-600 text-base font-medium max-w-3xl text-center mx-auto leading-relaxed">
+            {description}
+          </p>
+        ) : (
+          <p className="text-gray-600 text-base font-medium max-w-3xl text-center  mx-auto leading-relaxed">
+            Explore globally recognized university groups across major study destinations,
+            carefully curated for ambitious international students.
+          </p>
+        )}
 
         <div ref={sliderRef} className="keen-slider">
-          {testimonials.map((t) => (
+          {displayTestimonials.map((t) => (
             <div key={t.id} className="keen-slider__slide">
               <div className="flex justify-center py-6">
                 {/* CARD */}

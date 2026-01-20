@@ -163,21 +163,81 @@ export async function getPageInformationBySlug(
 
     if (!response.ok) {
       if (response.status === 404) {
+        // Try to get error message from response
+        try {
+          const errorData = await response.json()
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`⚠️ Page not found (404) for slug: ${slug}`);
+            if (errorData.message) {
+              console.warn(`   Backend message: ${errorData.message}`);
+            }
+            console.warn(`💡 Make sure:`);
+            console.warn(`   1. Page exists in database with slug: "${slug}"`);
+            console.warn(`   2. Page status is "Published" (not "Draft")`);
+            console.warn(`   3. API is running and accessible`);
+          }
+        } catch (e) {
+          // Response is not JSON, just log the status
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`⚠️ Page not found (404) for slug: ${slug}`);
+          }
+        }
         return null
       }
-      throw new Error(`Failed to fetch page: ${response.statusText}`)
+      throw new Error(`Failed to fetch page: ${response.status} ${response.statusText}`)
     }
 
     const jsonData = await response.json()
-    const data = pageInformationResponseSchema.parse(jsonData)
     
-    if (data.success && data.data) {
-      return data.data
+    // Debug logging
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`✅ API Response for ${slug}:`, {
+        success: jsonData.success,
+        hasData: !!jsonData.data,
+        status: jsonData.data?.status,
+        sections: jsonData.data?.sections?.length || 0,
+        warning: jsonData.warning,
+      });
+    }
+    
+    // In development, allow draft pages with warning
+    // In production, only allow published pages
+    const isDevelopment = process.env.NODE_ENV !== 'production'
+    
+    try {
+      const data = pageInformationResponseSchema.parse(jsonData)
+      
+      if (data.success && data.data) {
+        // In development, allow draft pages
+        // In production, only allow published pages
+        if (!isDevelopment && data.data.status !== 'Published') {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn(`⚠️ Page found but status is "${data.data.status}" (not "Published")`);
+            console.warn(`💡 Update page status to "Published" in admin panel for production`);
+          }
+          return null; // Don't show draft pages in production
+        }
+        
+        // Show warning in development if draft
+        if (isDevelopment && data.data.status === 'Draft') {
+          console.warn(`⚠️ Page "${slug}" is in Draft status. Update to "Published" for production.`);
+        }
+        
+        return data.data
+      }
+    } catch (parseError) {
+      console.error(`❌ Schema validation error for ${slug}:`, parseError)
+      // In development, try to return data anyway if it exists
+      if (isDevelopment && jsonData.success && jsonData.data) {
+        console.warn(`⚠️ Schema validation failed, but returning data in development mode`)
+        return jsonData.data as PageInformation
+      }
+      throw parseError
     }
 
     return null
   } catch (error) {
-    console.error(`Error fetching page information (${slug}):`, error)
+    console.error(`❌ Error fetching page information (${slug}):`, error)
     return null
   }
 }

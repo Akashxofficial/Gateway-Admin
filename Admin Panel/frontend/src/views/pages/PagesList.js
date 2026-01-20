@@ -48,6 +48,7 @@ const PagesList = () => {
   const [totalItems, setTotalItems] = useState(0)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deletingId, setDeletingId] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   // Fetch pages
   const fetchPages = async () => {
@@ -110,18 +111,29 @@ const PagesList = () => {
   }
 
   // Handle delete
-  const handleDelete = async () => {
-    if (!deletingId) return
+  const handleDelete = async (e) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    
+    if (!deletingId || deleting) return
 
+    setDeleting(true)
     try {
       const response = await pageInformationService.deletePageInformation(deletingId)
       if (response.success) {
         setShowDeleteModal(false)
         setDeletingId(null)
+        setError('') // Clear any previous errors
         fetchPages() // Refresh list
+      } else {
+        setError(response.message || 'Failed to delete page')
       }
     } catch (err) {
       setError(err.message || 'Failed to delete page')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -308,7 +320,9 @@ const PagesList = () => {
                               color="danger"
                               variant="ghost"
                               size="sm"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
                                 setDeletingId(page._id)
                                 setShowDeleteModal(true)
                               }}
@@ -381,34 +395,89 @@ const PagesList = () => {
       {showDeleteModal && (
         <div
           className="modal fade show"
-          style={{ display: 'block' }}
+          style={{ 
+            display: 'block',
+            zIndex: 1050,
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%'
+          }}
           tabIndex="-1"
-          onClick={() => setShowDeleteModal(false)}
+          onClick={(e) => {
+            // Only close if clicking the backdrop (not the modal content)
+            if (e.target === e.currentTarget) {
+              setShowDeleteModal(false)
+              setDeletingId(null)
+            }
+          }}
         >
-          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-content">
+          <div 
+            className="modal-dialog modal-dialog-centered"
+            onClick={(e) => e.stopPropagation()}
+            style={{ zIndex: 1051 }}
+          >
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h5 className="modal-title">Confirm Delete</h5>
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowDeleteModal(false)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setShowDeleteModal(false)
+                    setDeletingId(null)
+                  }}
+                  disabled={deleting}
                 ></button>
               </div>
               <div className="modal-body">
                 Are you sure you want to delete this page? This action cannot be undone.
               </div>
               <div className="modal-footer">
-                <CButton color="secondary" onClick={() => setShowDeleteModal(false)}>
+                <CButton 
+                  color="secondary" 
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setShowDeleteModal(false)
+                    setDeletingId(null)
+                  }}
+                  disabled={deleting}
+                >
                   Cancel
                 </CButton>
-                <CButton color="danger" onClick={handleDelete}>
-                  Delete
+                <CButton 
+                  color="danger" 
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <>
+                      <CSpinner size="sm" className="me-2" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
                 </CButton>
               </div>
             </div>
           </div>
-          <div className="modal-backdrop fade show"></div>
+          <div 
+            className="modal-backdrop fade show"
+            style={{ zIndex: 1049 }}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              if (!deleting) {
+                setShowDeleteModal(false)
+                setDeletingId(null)
+              }
+            }}
+          ></div>
         </div>
       )}
     </CRow>

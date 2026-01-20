@@ -1,10 +1,11 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google"
-import { Navbar } from "@/components/navbar"
+import Navbar from "@/components/navbar"
 import "./globals.css"
 import 'keen-slider/keen-slider.min.css';
 import { Footer } from "@/components/Footer"
+
 
 const notoSans = Noto_Sans({
   subsets: ["latin"],
@@ -53,10 +54,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
     <html lang="en">
       <body className={`${notoSans.className} antialiased`}>
-        <div style={{ backgroundColor: '#626262' }}>
+        <div className="relative z-999" style={{ backgroundColor: '#626262' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center py-2 text-xs sm:text-sm gap-2 sm:gap-0">
             <div className="flex items-center space-x-2">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,15 +67,15 @@ export default function RootLayout({
               <span className="text-white text-xs sm:text-sm">Contact Your Nearest Centre</span>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <a href="#" className="text-white hover:opacity-80 text-xs sm:text-sm">Our Centres</a>
+              <a href="/about" className="text-white hover:opacity-80 text-xs sm:text-sm">Our Centres</a>
               <button className="text-gray-900 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium hover:opacity-90" style={{ backgroundColor: '#ffff29' }}>Free Demo</button>
-              <a href="#" className="text-white hover:opacity-80 text-xs sm:text-sm">Student Login</a>
+              <a href="/login" className="text-white hover:opacity-80 text-xs sm:text-sm">Student Login</a>
             </div>
           </div>
         </div>
-        <Navbar />
+       <Navbar />
         {children}
-        <Footer/>
+        <Footer />
       </body>
     </html>
   )

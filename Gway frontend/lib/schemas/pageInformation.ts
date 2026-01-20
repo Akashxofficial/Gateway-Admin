@@ -13,7 +13,7 @@ export const pageSectionSchema = z.object({
 // Page Information Schema
 export const pageInformationSchema = z.object({
   _id: z.string(),
-  pageType: z.enum(['home_page', 'about_page', 'contact_page', 'other']).default('home_page'),
+  pageType: z.enum(['home_page', 'about_page', 'contact_page', 'city_page', 'ivy_league', 'other']).default('home_page'),
   title: z.string().min(1, 'Title is required'),
   subTitle: z.string().optional(),
   slug: z.string().min(1, 'Slug is required').toLowerCase(),

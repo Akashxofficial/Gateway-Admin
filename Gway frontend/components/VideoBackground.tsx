@@ -10,35 +10,45 @@ export default function VideoBackground({ videos }: VideoBackgroundProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
 
+  // ✅ 1. Handle video end ONLY
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleVideoEnd = () => {
-      // Move to next video, loop back to first if at the end
-      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
+    const handleEnded = () => {
+      setCurrentVideoIndex((prev) => (prev + 1));
     };
 
-    video.addEventListener('ended', handleVideoEnd);
-
-    // Load and play the current video
-    video.src = videos[currentVideoIndex];
-    video.load();
-    video.play().catch((error) => {
-      console.error('Error playing video:', error);
-    });
+    video.addEventListener('ended', handleEnded);
 
     return () => {
-      video.removeEventListener('ended', handleVideoEnd);
+      video.removeEventListener('ended', handleEnded);
     };
+  }, [videos.length]);
+
+  // ✅ 2. Load & play video when index changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.src = videos[currentVideoIndex];
+    video.load();
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // autoplay may be blocked — ignore safely
+      });
+    }
   }, [currentVideoIndex, videos]);
 
   return (
-    <video 
+    <video
       ref={videoRef}
-      autoPlay
       muted
+      autoPlay
       playsInline
+      preload="auto"
       className="w-full h-full object-cover"
     />
   );

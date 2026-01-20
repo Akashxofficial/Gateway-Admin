@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 const testimonials = [
   {
@@ -26,12 +27,40 @@ export default function VideoTestimonialsSlider() {
 
   return (
     <section
-      className="bg-cover bg-center"
+      className="bg-cover bg-center relative overflow-hidden"
       style={{
         backgroundImage: "url('/shapes/bg01.jpg')",
         backgroundColor: '#ffeae5',
       }}
     >
+      <div className="absolute -right-20 top-[0%] opacity-10 pointer-events-none hidden lg:block">
+        <div style={{
+          transform: 'rotate(-120deg) scaleY(-1)',
+          mixBlendMode: 'multiply'
+        }}>
+          <Image
+            src="images/g logo.png"
+            alt="Decorative Arrow"
+            width={600}
+            height={40}
+            className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
+          />
+        </div>
+      </div>
+      <div className="absolute -left-20 bottom-[0%] opacity-10 pointer-events-none hidden lg:block">
+        <div style={{
+          transform: 'rotate(-120deg) scaleY(-1)',
+          mixBlendMode: 'multiply'
+        }}>
+          <Image
+            src="images/g logo.png"
+            alt="Decorative Arrow"
+            width={600}
+            height={40}
+            className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
+          />
+        </div>
+      </div>
       <div className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold text-center mb-6">
           <span className="text-[#f46c44]">Video</span>{' '}
@@ -119,6 +148,28 @@ export default function VideoTestimonialsSlider() {
                         allowFullScreen
                       />
                     </div>
+                    <svg
+                      viewBox="0 0 1 1"
+                      preserveAspectRatio="none"
+                      className="absolute inset-0 w-full h-full pointer-events-none -z-1"
+                    >
+                      <path
+                        d="M0.06 0.09
+              Q0.03 0.10 0.03 0.16
+              L0.03 0.84
+              Q0.03 0.94 0.07 0.95
+              L0.93 0.95
+              Q0.97 0.94 0.97 0.85
+              L0.94 0.17
+              Q0.93 0.11 0.86 0.11
+              L0.13 0.09
+              Z"
+                        fill="none"
+                        stroke="#FFA88F"
+                        strokeWidth="40"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </svg>
                   </div>
                 </div>
 

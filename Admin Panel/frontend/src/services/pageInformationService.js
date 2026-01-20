@@ -24,7 +24,21 @@ export const pageInformationService = {
 
   // Update page information
   updatePageInformation: async (id, pageData) => {
-    return apiService.put(`/page-information/${id}`, pageData)
+    try {
+      const response = await apiService.put(`/page-information/${id}`, pageData)
+      // Ensure response has success property
+      if (response && typeof response === 'object') {
+        // If response doesn't have success, wrap it
+        if (!response.hasOwnProperty('success')) {
+          return { success: true, data: response }
+        }
+        return response
+      }
+      return response
+    } catch (error) {
+      console.error('Update page information error:', error)
+      throw error
+    }
   },
 
   // Delete page information

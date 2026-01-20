@@ -19,6 +19,7 @@ import {
 import { TrendingUp, Users, DollarSign, Activity } from "lucide-react"
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const chartData = [
   { name: "October", value: 2400 },
@@ -62,19 +63,10 @@ const itemVariants = {
 }
 
 export default function DashboardPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(useIsMobile()? false : true)
+  
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-
-        {/* Content */}
         <main className="flex-1 overflow-y-auto">
           <div className="p-4 md:p-8 space-y-6">
             {/* Welcome Section */}
@@ -233,7 +225,5 @@ export default function DashboardPage() {
             </motion.div>
           </div>
         </main>
-      </div>
-    </div>
   )
 }

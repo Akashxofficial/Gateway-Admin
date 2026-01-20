@@ -5,7 +5,19 @@ const pageInformationSchema = new mongoose.Schema(
     pageType: {
       type: String,
       required: [true, 'Please provide page type'],
-      enum: ['home_page', 'about_page', 'contact_page', 'city_page', 'ivy_league', 'other'],
+      enum: [
+        'home_page', 
+        'about_page', 
+        'contact_page', 
+        'city_page', 
+        'ivy_league',
+        'usa_universities',
+        'uk_universities',
+        'germany_public_universities',
+        'italy_france',
+        'canada_australia',
+        'other'
+      ],
       default: 'home_page',
     },
     title: {

@@ -61,9 +61,17 @@ function marquee(speed = 0.1) {
 }
 
 
-export default function OffersSlider() {
+export default function OffersSlider({ data }: { data?: Array<{ count?: number; text?: string; title?: string; number?: number }> }) {
   const sliderRef1 = useRef<HTMLDivElement>(null);
   const sliderRef2 = useRef<HTMLDivElement>(null);
+  
+  // Use provided data or fallback to default
+  const displayData = data && data.length > 0 
+    ? data.map(item => ({
+        count: item.count || item.number || 0,
+        text: item.text || item.title || ""
+      }))
+    : DATA;
 
   useEffect(() => {
     if (!sliderRef1.current || !sliderRef2.current) return;
@@ -94,18 +102,18 @@ export default function OffersSlider() {
       slider1.destroy();
       slider2.destroy();
     };
-  }, []);
+  }, [displayData]);
 
   return (
     <div className="space-y-6 py-8 overflow-hidden bg-white">
       <div ref={sliderRef1} className="keen-slider">
-        {[...DATA, ...DATA].map((item, i) => (
+        {[...displayData, ...displayData].map((item, i) => (
           <OfferCard key={i} {...item} />
         ))}
       </div>
 
       <div ref={sliderRef2} className="keen-slider">
-        {[...DATA, ...DATA].map((item, i) => (
+        {[...displayData, ...displayData].map((item, i) => (
           <OfferCard key={i} {...item} />
         ))}
       </div>
@@ -240,7 +248,7 @@ import {
 
 export function AdmissionRequirementsUK() {
   return (
-    <section className="bg-[#fff9f4] py-20">
+    <section className="bg-[#f5f1f0] py-20">
       <div className="max-w-7xl mx-auto px-6">
 
 
@@ -380,7 +388,7 @@ export function HowGawayHelps() {
 
 export function ScholarshipRequirements() {
   return (
-    <section className="bg-[#fff9f4] py-12">
+    <section className="bg-[#f5f1f0] py-12">
       <div className="max-w-7xl mx-auto px-6">
 
 

@@ -53,19 +53,19 @@ export default function AboutTabsSection() {
     <section className="mb-6">
       {/* TABS HEADER */}
       <div className="relative mb-8">
-        <div className="absolute -bottom-1 left-0 right-0 h-[3px] bg-[#f46c44]/40" />
+        <div className="absolute -bottom-0 z-11 left-0 right-0 h-[2px] bg-[#f46c44]" />
 
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 relative z-10 max-w-xl mx-auto">
+        <div className="flex flex-wrap justify-start gap-3 sm:gap-4 ">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`
-                px-5 sm:px-6 py-2 rounded-full
-                text-sm font-semibold transition-all
+                px-5 sm:px-6 py-2 rounded-tr-4xl shadow-2xl
+                text-base font-semibold transition-all hover:bg-[#f46c44]/20
                 ${
                   activeTab === tab.key
-                    ? "bg-[#f46c44] text-white shadow-md"
+                    ? "bg-[#f46c44] text-white shadow-2zl"
                     : "bg-white text-gray-500"
                 }
               `}
