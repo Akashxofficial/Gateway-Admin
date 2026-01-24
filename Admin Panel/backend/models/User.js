@@ -22,20 +22,17 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'Please provide a password'],
-      minlength: 6,
-      select: false,
     },
     status: {
       type: String,
       enum: ['Active', 'Inactive', 'Suspended'],
       default: 'Active',
     },
-    role: {
-      type: String,
-      enum: ['admin', 'manager', 'counsellor', 'user'],
-      default: 'user',
-    },
+    // role: {
+    //   type: String,
+    //   enum: ['admin', 'manager', 'counsellor', 'user'],
+    //   default: 'user',
+    // },
     metadata: {
       type: mongoose.Schema.Types.Mixed,
     },

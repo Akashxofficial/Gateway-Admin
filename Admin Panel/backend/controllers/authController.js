@@ -21,7 +21,7 @@ const generateVerificationToken = () => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body
+    const { name, email, phone } = req.body
 
     const userExists = await User.findOne({ email })
     if (userExists) {
@@ -58,8 +58,7 @@ exports.register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        role: user.role,
+        phone: user.phone
       },
     })
   } catch (error) {
@@ -67,112 +66,114 @@ exports.register = async (req, res) => {
   }
 }
 
-// @desc    Login user (Email, Password, and Role)
-// @route   POST /api/auth/login
-// @access  Public
+
 exports.login = async (req, res) => {
   try {
-    const { email, password, role } = req.body
+    const { email } = req.query
 
-    if (!email || !password) {
+    if (!email) {
       return res.status(400).json({ success: false, message: 'Please provide email and password' })
     }
+    let isExist = false;
 
-    // Find user and include password field for comparison
     const user = await User.findOne({ email }).select('+password')
+
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found. Please register first at /auth/register' 
+      return res.json({
+        success: true,
+        isExist,
+        message: 'User not found'
       })
     }
-
-    // Verify password
-    const isPasswordValid = await user.comparePassword(password)
-    if (!isPasswordValid) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Invalid email or password' 
-      })
-    }
-
-    // Check if role matches (optional, can be omitted if not needed)
-    if (role && user.role !== role) {
-      return res.status(403).json({
-        success: false,
-        message: `Access denied. This account has role: ${user.role}, but you selected: ${role}`,
-      })
-    }
-
-    // Generate token
-    const token = generateToken(user._id)
-
-    res.json({
-      success: true,
-      token,
-      data: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        isEmailVerified: user.isEmailVerified,
-      },
-    })
-  } catch (error) {
-    console.error('Login error:', error)
-    res.status(500).json({ success: false, message: error.message })
-  }
-}
-
-// @desc    Send OTP to email
-// @route   POST /api/auth/send-otp
-// @access  Public
-exports.sendOTP = async (req, res) => {
-  try {
-    const { email, role } = req.body
-
-    if (!email || !role) {
-      return res.status(400).json({ success: false, message: 'Please provide email and role' })
-    }
-
-    // Check if user exists
-    const user = await User.findOne({ email })
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found. Please register first at /auth/register' 
-      })
-    }
-
-    // Check if role matches
-    if (user.role !== role) {
-      return res.status(403).json({
-        success: false,
-        message: `Access denied. This account has role: ${user.role}, but you selected: ${role}`,
-      })
-    }
-
     // Generate static 6-digit OTP
     const otpCode = '123456'
 
     // Log OTP to console (for development/testing)
-    console.log(`\n📧 OTP Generated for ${email} (${role}): ${otpCode}\n`)
+    console.log(`\n📧 OTP Generated for ${email} : ${otpCode}\n`)
 
     // Delete any existing OTPs for this email and role
-    await OTP.deleteMany({ email, role, isUsed: false })
+    await OTP.deleteMany({ email,  isUsed: false })
 
     // Create new OTP
     const otp = await OTP.create({
       email,
       otp: otpCode,
-      role,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+    })
+
+    try {
+      await sendOTPEmail(email, otpCode)
+      res.json({
+        success: true,
+        isExist: true,
+        message: 'OTP sent to your email',
+      })
+    } catch (emailError) {
+      const isEmailNotConfigured = emailError.message === 'EMAIL_NOT_CONFIGURED'
+      const isDevelopment = process.env.NODE_ENV !== 'production'
+
+      if (isEmailNotConfigured || isDevelopment) {
+        console.log(`\n⚠️  Email not configured. OTP for ${email} : ${otpCode}\n`)
+        return res.json({
+          success: true,
+          message: 'OTP generated (email not configured - check console)',
+          isExist: true,
+          otp: otpCode, // Include OTP in development mode
+          isDevelopment: true,
+        })
+      }
+
+      console.error('Failed to send OTP email:', emailError.message)
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send OTP email. Please contact support.',
+      })
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message })
+  }
+}
+
+
+exports.sendOTP = async (req, res) => {
+  try {
+    const { name, phone, email } = req.body
+
+    if (!email || !phone) {
+      return res.status(400).json({ success: false, message: 'Please provide email and phone' })
+    }
+
+    const user = await User.findOne({ email })
+    if (user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User exist please check email'
+      })
+    }
+
+    const otpCode = '123456'
+
+    // Log OTP to console (for development/testing)
+    console.log(`\n📧 OTP Generated for ${email}: ${otpCode}\n`)
+
+    // Delete any existing OTPs for this email and role
+    await OTP.deleteMany({ email, isUsed: false })
+
+    const createdUser = await User.create({
+      name,
+      email,
+      phone
+    })
+    // Create new OTP
+    const otp = await OTP.create({
+      email,
+      otp: otpCode,
       expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
     })
 
     // Send OTP email
     try {
-      await sendOTPEmail(email, otpCode, role)
+      await sendOTPEmail(email, otpCode)
       res.json({
         success: true,
         message: 'OTP sent to your email',
@@ -181,18 +182,16 @@ exports.sendOTP = async (req, res) => {
       // Check if error is due to email not being configured
       const isEmailNotConfigured = emailError.message === 'EMAIL_NOT_CONFIGURED'
       const isDevelopment = process.env.NODE_ENV !== 'production'
-      
+
       if (isEmailNotConfigured || isDevelopment) {
         // In development mode or when email is not configured, return OTP in response
-        console.log(`\n⚠️  Email not configured. OTP for ${email} (${role}): ${otpCode}\n`)
+        console.log(`\n⚠️  Email not configured. OTP for ${email}: ${otpCode}\n`)
         return res.json({
           success: true,
           message: 'OTP generated (email not configured - check console)',
-          otp: otpCode, // Include OTP in development mode
-          isDevelopment: true,
         })
       }
-      
+
       // In production, don't expose OTP even if email fails
       console.error('Failed to send OTP email:', emailError.message)
       res.status(500).json({
@@ -211,17 +210,15 @@ exports.sendOTP = async (req, res) => {
 // @access  Public
 exports.verifyOTP = async (req, res) => {
   try {
-    const { email, otp, role } = req.body
+    const { email, otp } = req.body
 
-    if (!email || !otp || !role) {
+    if (!email || !otp) {
       return res.status(400).json({ success: false, message: 'Please provide email, OTP, and role' })
     }
 
-    // Find valid OTP
     const otpRecord = await OTP.findOne({
       email,
       otp,
-      role,
       isUsed: false,
       expiresAt: { $gt: new Date() },
     })
@@ -237,9 +234,9 @@ exports.verifyOTP = async (req, res) => {
     // Get user
     const user = await User.findOne({ email })
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found. Please register first at /auth/register' 
+      return res.status(404).json({
+        success: false,
+        message: 'User not found. Please register first at /auth/register'
       })
     }
 
@@ -248,14 +245,7 @@ exports.verifyOTP = async (req, res) => {
 
     res.json({
       success: true,
-      token,
-      data: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-      },
+      token
     })
   } catch (error) {
     console.error('Verify OTP error:', error)
